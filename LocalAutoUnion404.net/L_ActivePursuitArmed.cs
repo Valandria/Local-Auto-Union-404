@@ -47,7 +47,6 @@ namespace LocalAutoUnion404
             //Car Data
             VehicleData apasvehicleData = new VehicleData();
             apasvehicleData.Registration = false;
-            Utilities.SetVehicleData(apasvehicle.NetworkId,apasvehicleData);
             Utilities.ExcludeVehicleFromTrafficStop(apasvehicle.NetworkId,true);
             apasvehicle.IsPersistent = true;
             List<Item> apasitems3 = new List<Item>();
@@ -72,6 +71,8 @@ namespace LocalAutoUnion404
             apaspassenger.AttachBlip();
             API.Wait(6000);
             apaspassenger.Task.FightAgainst(player);
+            apasdriver.Accuracy = 20;
+            apaspassenger.Accuracy = 40;
             PedData data3 = await Utilities.GetPedData(apaspassenger.NetworkId);
             PedData data1 = await Utilities.GetPedData(apasdriver.NetworkId);
             string firstname2 = data3.FirstName;
@@ -112,7 +113,6 @@ namespace LocalAutoUnion404
             int apasextraillegalthingsdecision = apasextraillegalthingsdecider.Next(1, 20);
             if (apasextraillegalthingsdecision <= 5)
             {
-                //Drugs
                 Item apascrackpipedriverleftpocket = new Item
                 {
                     Name = "Crack pipe",
@@ -129,6 +129,7 @@ namespace LocalAutoUnion404
                     IsIllegal = true
                 };
 
+                apasvehicleData.Flag = "Prior drug related violations";
                 apasitems.Add(apascrackpipedriverleftpocket);
                 apasitems3.Add(apaslighterinconsole);
                 apasitems3.Add(apascrackfoilunderdriverseat);
@@ -138,7 +139,6 @@ namespace LocalAutoUnion404
             };
             if (apasextraillegalthingsdecision > 5 && apasextraillegalthingsdecision <= 10)
             {
-                //Alcohol
                 Item apasemptybeercansonfloorboard = new Item
                 {
                     Name = "Several cans of empty beer on floorboard",
@@ -150,6 +150,7 @@ namespace LocalAutoUnion404
                     IsIllegal = true,
                 };
 
+                apasvehicleData.Flag = "Prior DWI violations";
                 apasitems3.Add(apasemptybeercansonfloorboard);
                 apasitems3.Add(apasopenbeercanincupholder);
                 apasdriverdata.BloodAlcoholLevel = 0.11;
@@ -157,7 +158,6 @@ namespace LocalAutoUnion404
             };
             if (apasextraillegalthingsdecision > 10 && apasextraillegalthingsdecision <= 15)
             {
-                //Weapons
                 Item apascacheoflongrifles = new Item
                 {
                     Name = "Several rifles with serial numbers scratched off",
@@ -169,12 +169,15 @@ namespace LocalAutoUnion404
                     IsIllegal = false,
                 };
 
+                apasvehicleData.Flag = "Wanted for questioning; weapons trafficking";
                 apasitems3.Add(apascacheoflongrifles);
                 apasitems3.Add(apasstockpileofammo);
             };
             if (apasextraillegalthingsdecision > 15)
             {
-                //Warrant
+                apasdriverdata.Warrant = "Felony eluding with firearm";
+                apaspassengerdata.Warrant = "Attempted Murder of Law Enforcement";
+                apasvehicleData.Flag = "Known to attack law enforcement";
             };
 
             apasdriverdata.Items = apasitems;
@@ -182,6 +185,7 @@ namespace LocalAutoUnion404
             apasvehicleData.Items = apasitems3;
             Utilities.SetPedData(apasdriver.NetworkId, apasdriverdata);
             Utilities.SetPedData(apaspassenger.NetworkId, apaspassengerdata);
+            Utilities.SetVehicleData(apasvehicle.NetworkId, apasvehicleData);
         }
         public async override Task OnAccept()
         {

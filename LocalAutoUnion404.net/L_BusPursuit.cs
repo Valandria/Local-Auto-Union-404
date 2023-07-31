@@ -39,25 +39,53 @@ namespace LocalAutoUnion404
             
             lbpdriver.AlwaysKeepTask = true;
             lbpdriver.BlockPermanentEvents = true;
+            lbpdriver.IsPersistent = true;
+            lbpstolenbus.IsPersistent = true;
             
             PlayerData playerData = Utilities.GetPlayerData();
             string displayName = playerData.DisplayName;
+            PedData lbpdriverdata = await Utilities.GetPedData(lbpdriver.NetworkId);
             VehicleData datalbpstolenbus = await Utilities.GetVehicleData(lbpstolenbus.NetworkId);
             string vehicleName = datalbpstolenbus.Name;
             datalbpstolenbus.Flag = "Stolen";
-            Notify("~y~Officer ~b~" + displayName + ",~y~ the suspects are driving a " + vehicleName + "!");
-                
-            lbpdriver.Task.CruiseWithVehicle(lbpstolenbus, 2f, 387);
+            Notify("A " + vehicleName + " has been reported stolen from the terminal, GPS tracking puts it near your location.");
+            
             lbpstolenbus.AttachBlip();
             lbpdriver.AttachBlip();
             API.AddBlipForEntity(lbpstolenbus.GetHashCode());
             API.AddBlipForEntity(lbpdriver.GetHashCode());
 
+            lbpdriver.DrivingStyle = DrivingStyle.AvoidTrafficExtremely;
+            lbpdriver.Task.FleeFrom(player);
+            Pursuit.RegisterPursuit(lbpdriver);
+
+            await BaseScript.Delay(50);
+
             Random lbpstolenbusscenario = new Random();
             int buspursuitending = lbpstolenbusscenario.Next(1, 100 + 1);
             if (buspursuitending < 25)
             {
+                await BaseScript.Delay(1);
+
                 Tick += Methmademedoitagainofficer;
+
+                await BaseScript.Delay(1);
+
+                lbpdriverdata.UsedDrugs[0] = PedData.Drugs.Meth;
+                List<Item> lbpmmmdiaoitems = new List<Item>();
+                Item lbpmmmdiaometh = new Item
+                {
+                    Name = "Bag of meth (in left pocket)",
+                    IsIllegal = true,
+                };
+                Item lbpmmmdiaomethpipe = new Item
+                {
+                    Name = "Meth pipe clutched in hand",
+                    IsIllegal = true,
+                };
+                lbpmmmdiaoitems.Add(lbpmmmdiaometh);
+                lbpmmmdiaoitems.Add(lbpmmmdiaomethpipe);
+                lbpdriverdata.Items = lbpmmmdiaoitems;
             }
             else if (buspursuitending >= 25 && buspursuitending < 50)
             {
@@ -76,6 +104,8 @@ namespace LocalAutoUnion404
         public async Task Methmademedoitagainofficer()
         {
             Tick -= Methmademedoitagainofficer;
+
+            await BaseScript.Delay(500);
 
             VehicleData methbus = new VehicleData();
             List<Item> busstuff = new List<Item>();
@@ -144,6 +174,10 @@ namespace LocalAutoUnion404
                 Name = "Calculator",
                 IsIllegal = false
             };
+
+            Random lbsmmmdiaoitemdecider = new Random();
+            int lbsmmdiaoitemchoice = lbsmmmdiaoitemdecider.Next(1, 100);
+
         }
 
         public async Task Gangrelatedinitiation()

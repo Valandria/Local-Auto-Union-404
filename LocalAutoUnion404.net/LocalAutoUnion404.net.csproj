@@ -62,7 +62,7 @@
     <Compile Include="L_HitRun.cs" />
     <Compile Include="L_HitRunBike.cs" />
     <Compile Include="L_OversizedCar.cs" />
-    <Compile Include="L_ActivePursuit.cs" />
+    <Compile Include="L_ActivePursuitArmed.cs" />
     <Compile Include="L_RecklessDriver.cs" />
     <Compile Include="L_ReverseVehicle.cs" />
     <Compile Include="L_SlowDriver.cs" />
